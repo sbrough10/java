@@ -15,7 +15,7 @@ public class Curve extends Path {
     }
 
     public Curve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-        this(new Vector(x0, y0), new Vector(x1, y1), new Vector(x2, y2), new Vector(x3, y3));
+        this(new BasicVector(x0, y0), new BasicVector(x1, y1), new BasicVector(x2, y2), new BasicVector(x3, y3));
     }
 
     private LoopNode statPoints;

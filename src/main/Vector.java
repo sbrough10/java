@@ -1,73 +1,22 @@
 package main;
 
-/**
- * Created by stephen.broughton on 5/21/15.
- */
-public class Vector {
+public interface Vector{
 
-    public float getX() {
-        return x;
-    }
+    public float getX();
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    public void setX(float x);
 
-    private float x;
+    public float getY();
 
-    public float getY() {
-        return y;
-    }
+    public void setY(float y);
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    public boolean equals(Vector vec);
 
-    private float y;
+    public Vector add(Vector vec);
 
-    public Vector(float x, float y){
-        setX(x);
-        setY(y);
-    }
+    public Vector subtract(Vector vec);
 
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof Vector){
-            return equals( (Vector) obj );
-        }
-        return false;
-    }
+    public Vector multiplyBy(float scalar);
 
-    public boolean equals(Vector vec){
-        if(vec.getX() == getX() && vec.getY() == getY()){
-            return true;
-        }
-        return false;
-    }
-
-    public Vector add(Vector vec){
-        setX( getX() + vec.getX() );
-        setY( getY() + vec.getY() );
-        return this;
-    }
-
-    public Vector subtract(Vector vec){
-        setX( getX() - vec.getX() );
-        setY( getY() - vec.getY() );
-        return this;
-    }
-
-    public Vector multiplyBy(float scalar){
-        setX( getX() * scalar );
-        setY( getY() * scalar );
-        return this;
-    }
-
-    public Vector divideBy(float scalar){
-        setX( getX() / scalar );
-        setY( getY() / scalar );
-        return this;
-    }
-
-
+    public Vector divideBy(float scalar);
 }
