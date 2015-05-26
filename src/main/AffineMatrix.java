@@ -5,7 +5,7 @@ package main;
  */
 public class AffineMatrix {
 
-    private final float[][] m = new float[2][3];
+    protected final float[][] m = new float[2][3];
 
     public AffineMatrix(){
         setTo(1, 0, 0, 1, 0, 0);
@@ -90,7 +90,8 @@ public class AffineMatrix {
      * @return The matrix that was translated
      */
     public AffineMatrix preTranslate(float dx, float dy){
-        return this;
+        float[][] matrix = { {0,0,0},{0,dx,dy} };
+        return setToCombined(matrix, this);
     }
 
     public AffineMatrix preTranslate(AffineMatrix am){
@@ -98,7 +99,6 @@ public class AffineMatrix {
     }
 
     public AffineMatrix postTranslate(float dx, float dy){
-
         m[0][2] += dx;
         m[1][2] += dy;
         return this;
@@ -109,7 +109,8 @@ public class AffineMatrix {
     }
 
     public AffineMatrix preScale(float dx, float dy){
-        return this;
+        float[][] matrix = { {dx, 0, 0}, {0, dy, 0} };
+        return setToCombined(matrix, this);
     }
 
     public AffineMatrix preScale(AffineMatrix am){
@@ -132,7 +133,8 @@ public class AffineMatrix {
     }
 
     public AffineMatrix preShear(float dx, float dy){
-        return this;
+        float[][] matrix = { {0, dx, 0}, {dy, 0, 0} };
+        return setToCombined(matrix, this);
     }
 
     public AffineMatrix preShear(AffineMatrix am){
@@ -140,7 +142,8 @@ public class AffineMatrix {
     }
 
     public AffineMatrix postShear(float dx, float dy){
-        return this;
+        float[][] matrix = { {dx, 0, 0}, {0, dy, 0} };
+        return setToCombined(this, matrix);
     }
 
     public AffineMatrix postShear(AffineMatrix am){
@@ -148,10 +151,7 @@ public class AffineMatrix {
     }
 
     public AffineMatrix preRotate(float angle){
-        float cos = (float) Math.cos(angle);
-        float sin = (float) Math.sin(angle);
-
-        return preRotate(cos, sin);
+        return preRotate( (float) Math.cos(angle), (float) Math.sin(angle) );
     }
 
     public AffineMatrix preRotate(float cos, float sin){
@@ -166,7 +166,12 @@ public class AffineMatrix {
     }
 
     public AffineMatrix postRotate(float angle){
-        return this;
+        return postRotate( (float) Math.cos(angle), (float) Math.sin(angle));
+    }
+
+    public AffineMatrix postRotate(float cos, float sin){
+        float[][] matrix = { {cos, -sin, 0}, {sin, cos, 0} };
+        return setToCombined(this, matrix);
     }
 
     public float findDeterminant()
@@ -190,7 +195,7 @@ public class AffineMatrix {
         return setToInverted(this);
     }
 
-    public class NoShearing extends AffineMatrix{
+    public static class NoShearing extends AffineMatrix{
 
         @Override
         public float transposeX(final float x, final float y){

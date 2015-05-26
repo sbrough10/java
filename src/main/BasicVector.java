@@ -34,50 +34,6 @@ public class BasicVector implements Vector {
         setY(y);
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof Vector){
-            return equals( (Vector) obj );
-        }
-        return false;
-    }
-
-    @Override
-    public boolean equals(Vector vec){
-        if(vec.getX() == getX() && vec.getY() == getY()){
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Vector add(Vector vec){
-        setX( getX() + vec.getX() );
-        setY( getY() + vec.getY() );
-        return this;
-    }
-
-    @Override
-    public Vector subtract(Vector vec){
-        setX( getX() - vec.getX() );
-        setY( getY() - vec.getY() );
-        return this;
-    }
-
-    @Override
-    public Vector multiplyBy(float scalar){
-        setX( getX() * scalar );
-        setY( getY() * scalar );
-        return this;
-    }
-
-    @Override
-    public Vector divideBy(float scalar){
-        setX( getX() / scalar );
-        setY( getY() / scalar );
-        return this;
-    }
-
 
 }
 
