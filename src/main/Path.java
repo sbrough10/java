@@ -14,34 +14,40 @@ public abstract class Path {
     }
 
     public static class Intersection {
-        final float tA;
-        final float tB;
+        public static class Point extends Intersection {
+            public final float tA;
+            public final float tB;
 
-        public Intersection(float tA, float tB){
-            this.tA = tA;
-            this.tB = tB;
+            public Point(float tA, float tB){
+                this.tA = tA;
+                this.tB = tB;
+            }
+        }
+
+        public static class Segment extends Intersection {
+            public final float t0A;
+            public final float t1A;
+            public final float t0B;
+            public final float t1B;
+
+            public Segment(float t0A, float t1A, float t0B, float t1B){
+                this.t0A = t0A;
+                this.t1A = t1A;
+                this.t0B = t0B;
+                this.t1B = t1B;
+
+            }
         }
     }
 
     public static class Contact {
-        public Contact(Line pA, Line pB) {
-            /**
-             *  x# = (Bx - Ax)t + Ax
-             *  y# = (By - Ay)t + Ay
-             *
-             *  (B0 - A0)t + A0 = (B1 - A1)t + A1
-             *  (B0 - A0 - B1 + A1)t = A1 - A0
-             *  t = (A1 - A0) / (B0 - A0 - B1 + A1)
-             */
 
-            float tX = (pB.nodeA.getX() - pA.nodeA.getX()) / (pA.nodeB.getX() - pA.nodeA.getX() - pB.nodeB.getX() + pB.nodeA.getX());
-            float tY = (pB.nodeA.getY() - pA.nodeA.getY()) / (pA.nodeB.getY() - pA.nodeA.getY() - pB.nodeB.getY() + pB.nodeA.getY());
+        private LinkListNode.Chain<Curve.BoxComp> tests = new LinkListNode.Chain<>();
+        public final LinkListNode.Chain<Intersection> points = new LinkListNode.Chain<>();
+
+        public Contact(Line pA, Line pB) {
 
         }
-
-        private LinkListNode<Curve.BoxComp> tests = new LinkListNode<>(null);
-        private int pCount = 0;
-        public final LinkListNode.Chain<Intersection> points = new LinkListNode.Chain<>();
 
         public Contact(Curve pA, Curve pB, float precision){
             if(BoundingBox.Contact.existsBetween(pA.outerBounds, pB.outerBounds)){
@@ -55,13 +61,10 @@ public abstract class Path {
                     return true;
                 });
                 precision = precision * precision;
-                while(tests.postNode != tests) {
+                while(tests.postNode != null) {
                     tests.iterate((bcomp, node) -> {
-                        if (node == tests) return false;
-                        else {
-                            bcomp.divideAndConquer(node, points);
-                            return true;
-                        }
+                        bcomp.divideAndConquer(node, points);
+                        return true;
                     });
                 }
             }

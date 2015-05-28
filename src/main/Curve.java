@@ -136,11 +136,12 @@ public class Curve extends Path {
                 count++;
             }
             if(count == 4){
-                points.link(new Path.Intersection( (treeA.t0 + treeA.t1) / 2, (treeB.t0 + treeB.t1) / 2 ));
-                new LinkListNode.Chain<BoxComp>(node.anteNode.anteNode.anteNode.anteNode, node.anteNode).unlink();
-            }
+                points.link(new Path.Intersection.Point( (treeA.t0 + treeA.t1) / 2, (treeB.t0 + treeB.t1) / 2 ));
+                new LinkListNode.Chain<BoxComp>(node.anteNode.anteNode.anteNode.anteNode, node).unlink();
+            } else {
+                node.unlink();
 
-            node.unlink();
+            }
         }
     }
 
