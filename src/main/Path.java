@@ -46,7 +46,10 @@ public abstract class Path {
         public final LinkListNode.Chain<Intersection> points = new LinkListNode.Chain<>();
 
         public Contact(Line pA, Line pB) {
-
+            Vector vecA = pA.getDirection();
+            Vector vecB = pB.getDirection();
+            float denom = vecA.getX() * vecB.getY() - vecA.getY() * vecB.getX();
+            float numer = vecB.getX() * (pA.nodeA.getY() - pB.nodeA.getY()) - vecB.getY() * (pA.)
         }
 
         public Contact(Curve pA, Curve pB, float precision){
