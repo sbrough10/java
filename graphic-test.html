@@ -1,0 +1,196 @@
+<body style='margin: 0px;'>
+	<canvas width='1000' height='1000' style='float: left;'></canvas>
+	<button>Generate</button>
+	<script>
+
+		var canvas = document.getElementsByTagName('canvas')[0];
+		var button = document.getElementsByTagName('button')[0];
+		var ctx = canvas.getContext('2d');
+
+		function bezierCoord(nodeA, ctrlA, ctrlB, nodeB, t){
+			s = 1 - t;
+			return s * s * s * nodeA + 3 * s * s * t * ctrlA + 3 * s * t * t * ctrlB + t * t * t * nodeB;
+		}
+
+		function drawPoint(point, radius){
+			ctx.beginPath();
+			ctx.arc(point.x, point.y, radius, 0, Math.PI * 2);
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		function drawTangent(node, ctrl){
+			ctx.beginPath();
+			ctx.moveTo(node.x, node.y);
+			ctx.lineTo(ctrl.x, ctrl.y);
+			ctx.setLineDash([6, 6]);
+			ctx.stroke();
+		}
+
+		function findVertices(c0, c1, c2, c3){
+			var a = (-3 * c0 + 9 * c1 - 9 * c2 + 3 * c3);
+			var b = (6 * c0 - 12 * c1 + 6 * c2);
+			var c = (3 * c1 - 3 * c0);
+
+			var descrim = Math.sqrt(b * b - 4 * a * c);
+			var rootA = (-b + descrim) / (2 * a);
+			var rootB = (-b - descrim) / (2 * a);
+			if(0 < rootA && rootA < 1){
+				if(0 < rootB && rootB < 1){
+					return [rootA, rootB];
+				} else {
+					return [rootA];
+				}
+			} else if(0 < rootB && rootB < 1){
+				return [rootB];
+			} else {
+				return [];
+			}
+
+		}
+
+
+		function Curve(x0, y0, x1, y1, x2, y2, x3, y3){
+			ctx.beginPath();
+
+			this.nodeA = {x: x0, y: y0}
+			this.ctrlA = {x: x1, y: y1}
+			this.ctrlB = {x: x2, y: y2}
+			this.nodeB = {x: x3, y: y3}
+			var self = this;
+
+
+			this.constructor.curveList.push(this);
+			this.constructor.pointList.push(this.nodeA, this.ctrlA, this.ctrlB, this.nodeB);
+
+			this.draw = function(){
+				
+
+				ctx.moveTo(this.nodeA.x, this.nodeA.y);
+				ctx.bezierCurveTo(this.ctrlA.x, this.ctrlA.y, this.ctrlB.x, this.ctrlB.y, this.nodeB.x, this.nodeB.y);
+
+				ctx.setLineDash([1,0]);
+				ctx.strokeStyle = "#000000";
+				ctx.stroke();
+
+				drawTangent(this.nodeA, this.ctrlA);
+				drawTangent(this.nodeB, this.ctrlB);
+
+				drawPoint(this.nodeA, 5);
+				drawPoint(this.ctrlA, 5);
+				drawPoint(this.ctrlB, 5);
+				drawPoint(this.nodeB, 5);
+
+				// this.vertices = findVertices(this.nodeA.x, this.ctrlA.x, this.ctrlB.x, this.nodeB.x)
+				// 	   .concat( findVertices(this.nodeA.y, this.ctrlA.y, this.ctrlB.y, this.nodeB.y) );
+
+				// this.vertices.sort();
+
+				// this.vertices.forEach( function(t, i){
+				// 	self.vertices[i] = {
+				// 		x: bezierCoord(self.nodeA.x, self.ctrlA.x, self.ctrlB.x, self.nodeB.x, t),
+				// 		y: bezierCoord(self.nodeA.y, self.ctrlA.y, self.ctrlB.y, self.nodeB.y, t)
+				// 	}
+
+				// 	drawPoint(self.vertices[i], 3);
+				// } );
+
+				// var points = ([this.nodeA]).concat(this.vertices).concat([this.nodeB]);
+
+				// var max = {x: 0, y: 0};
+				// var min = {x: 1000, y: 1000};
+
+
+				// ctx.setLineDash([5, 5]);
+				// ctx.strokeStyle = "#FF6600";
+
+
+				// var p0 = null;
+
+				// points.forEach(function(p1){
+				// 	max.x = max.x < p1.x ? p1.x : max.x;
+				// 	max.y = max.y < p1.y ? p1.y : max.y;
+				// 	min.x = min.x > p1.x ? p1.x : min.x;
+				// 	min.y = min.y > p1.y ? p1.y : min.y;
+
+				// 	if(p0 != null){
+				// 		ctx.strokeRect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y);
+				// 	}
+				// 	p0 = p1;
+
+				// });
+
+				// ctx.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
+
+			}
+			this.draw();
+
+		}
+
+		Curve.curveList = [];
+
+		Curve.pointList = [];
+
+		Curve.hover = null;
+		Curve.drag = null;
+
+		canvas.addEventListener("mousedown", function(event){
+			if(Curve.hover != null){
+				Curve.drag = Curve.hover;
+			}
+		});
+		canvas.addEventListener("mouseup", function(event){
+			Curve.drag = null;
+		});
+		canvas.addEventListener("mousemove", function(event){
+			if(Curve.drag == null){
+				var x = event.clientX;
+				var y = event.clientY;
+
+				Curve.hover = null;
+				Curve.pointList.forEach(function(point){
+					if( (x - point.x) * (x - point.x) + (y - point.y) * (y - point.y) < 100 ){
+						Curve.hover = point;
+					}
+				});
+				if(Curve.hover == null){
+					canvas.style.cursor = "arrow";
+				} else {
+					canvas.style.cursor = "pointer";
+				}
+			} else {
+				Curve.drag.x = event.clientX;
+				Curve.drag.y = event.clientY;
+				ctx.clearRect(0, 0, 1000, 1000);
+				Curve.curveList.forEach(function(curve){
+					curve.draw();
+				})
+			}
+		});
+        
+        var curveA, curveB;
+
+        curveA = new Curve(713, 150, 249, 140, 761, 342, 223, 416);
+        curveB = new Curve(453, 69, 794, 326, 125, 315, 447, 462);
+
+	function vecToArg(vec){
+		return vec.x + ", " + vec.y;
+	}
+
+	button.addEventListener("click", function(){
+		console.log("\ncurveA = new Curve("
+		 + vecToArg(curveA.nodeA) + ", "
+		 + vecToArg(curveA.ctrlA) + ", "
+		 + vecToArg(curveA.ctrlB) + ", "
+		 + vecToArg(curveA.nodeB) + ");"
+		 + "\ncurveB = new Curve("
+		 + vecToArg(curveB.nodeA) + ", "
+		 + vecToArg(curveB.ctrlA) + ", "
+		 + vecToArg(curveB.ctrlB) + ", "
+		 + vecToArg(curveB.nodeB) + ");"
+		);
+	}, false);
+
+
+	</script>
+</body>

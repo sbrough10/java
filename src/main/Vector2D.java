@@ -1,6 +1,6 @@
 package main;
 
-public interface Vector{
+public interface Vector2D {
 
     public float getX();
 

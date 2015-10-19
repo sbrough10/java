@@ -46,8 +46,17 @@ public class BoundingBox {
         return this.minX <= bbox.minX && bbox.maxX <= this.maxX && this.minY <= bbox.minY && bbox.maxY <= this.maxY;
     }
 
-    public float area(){
+    public float getArea(){
         return (this.maxX - this.minX) * (this.maxY - this.minY);
+    }
+
+    public boolean meetsPrecision(final float precision){
+        return this.maxX - this.minX <= precision && this.maxY - this.minY <= precision;
+    }
+
+    @Override
+    public String toString(){
+        return "{ x: [" + minX + "," + maxX + "], y: [" + minY + "," + maxY + "] }";
     }
 
     public static class Contact {
@@ -55,7 +64,7 @@ public class BoundingBox {
         public final BoundingBox result;
 
         public static boolean existsBetween(BoundingBox b0, BoundingBox b1){
-            return !( b0.maxX < b1.minX || b1.maxX < b0.minX || b0.maxY < b1.minY || b1.maxY < b0.minY );
+            return b0.maxX >= b1.minX && b1.maxX >= b0.minX && b0.maxY >= b1.minY && b1.maxY >= b0.minY;
         }
 
 

@@ -35,12 +35,27 @@ public class AffineMatrix {
     }
 
     public float transposeX(final float x, final float y){
-        preTranslate(1.0f, 2.0f);
         return x * m[0][0] + y * m[0][1] + m[0][2];
     }
 
     public float transposeY(final float x, final float y){
         return x * m[1][0] + y * m[1][1] + m[1][2];
+    }
+
+    public Vector2D transpose(final Vector2D vec) {
+        final float x = vec.getX();
+        final float y = vec.getY();
+        vec.setX(transposeX(x, y));
+        vec.setY(transposeY(x, y));
+        return vec;
+    }
+
+    public Vector2D transpose(final Vector2D src, final Vector2D dst){
+        final float x = src.getX();
+        final float y = src.getY();
+        dst.setX(transposeX(x, y));
+        dst.setY(transposeY(x, y));
+        return dst;
     }
 
     public AffineMatrix setToCombined(AffineMatrix am0, AffineMatrix am1){
@@ -142,7 +157,7 @@ public class AffineMatrix {
     }
 
     public AffineMatrix postShear(float dx, float dy){
-        float[][] matrix = { {dx, 0, 0}, {0, dy, 0} };
+        float[][] matrix = { {0, dx, 0}, {dy, 0, 0} };
         return setToCombined(this, matrix);
     }
 

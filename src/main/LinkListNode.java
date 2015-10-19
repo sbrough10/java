@@ -23,6 +23,14 @@ public class LinkListNode<T> {
         boolean run(U value, LinkListNode<U> node);
     }
 
+    public interface RoutineTypeIII<U> {
+        void run(U value);
+    }
+
+    public interface RoutineTypeIV<U> {
+        void run(U value, LinkListNode<U> node);
+    }
+
     public void iterate(@NotNull final RoutineTypeI<T> routine){
         LinkListNode<T> current = this.postNode;
         while( routine.run( current.value ) ){
@@ -70,6 +78,10 @@ public class LinkListNode<T> {
             postNode.anteNode = anteNode;
         }
 
+        public Chain(T anteNodeVal, T postNodeVal){
+            this( new LinkListNode<>(anteNodeVal), new LinkListNode<>(postNodeVal) );
+        }
+
         public @NotNull Chain<T> link(@NotNull LinkListNode<T> node){
             if(this.anteNode == null){
                 this.postNode = this.anteNode = node;
@@ -85,15 +97,17 @@ public class LinkListNode<T> {
         }
 
         public @NotNull Chain<T> link(@NotNull Chain<T> chain){
-            if(chain.anteNode == null){
-                return this;
-            } else if(this.anteNode == null){
-                return chain;
-            } else {
-                this.postNode.link(chain.anteNode);
-                this.postNode = chain.postNode;
-                return this;
+            if(chain.anteNode != null) {
+                if (this.anteNode == null) {
+                    this.anteNode = chain.anteNode;
+                    this.postNode = chain.postNode;
+
+                } else {
+                    this.postNode.link(chain.anteNode);
+                    this.postNode = chain.postNode;
+                }
             }
+            return this;
         }
 
         public void iterate(@NotNull RoutineTypeI<T> routine){
@@ -117,6 +131,18 @@ public class LinkListNode<T> {
         public @NotNull LinkListNode.Chain<T> unlink(){
             this.anteNode.anteNode.link(this.postNode.postNode);
             return this;
+        }
+
+        private transient String asString;
+
+        @Override
+        public String toString(){
+            asString = "[ ";
+            iterate(value -> {
+                asString += value.toString() + " ";
+                return true;
+            });
+            return asString + "]";
         }
     }
 }

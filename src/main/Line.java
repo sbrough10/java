@@ -5,7 +5,7 @@ package main;
  */
 public class Line extends Path {
 
-    public Line(Vector nodeA, Vector nodeB){
+    public Line(Vector2D nodeA, Vector2D nodeB){
         super(nodeA, nodeB);
     }
 
@@ -13,7 +13,8 @@ public class Line extends Path {
         this(new BasicVector(x0, y0), new BasicVector(x1, y1));
     }
 
-    public Vector getDirection(){
+    @Override
+    public Vector2D getDirection(float t){
         return new BasicVector(nodeB.getX() - nodeA.getX(), nodeB.getY() - nodeA.getY());
     }
 

@@ -3,7 +3,7 @@ package main;
 /**
  * Created by stephen.broughton on 5/21/15.
  */
-public class BasicVector implements Vector {
+public class BasicVector implements Vector2D {
 
     @Override
     public float getX() {
@@ -34,6 +34,9 @@ public class BasicVector implements Vector {
         setY(y);
     }
 
-
+    @Override
+    public String toString(){
+        return "{ x: " + getX() + ", y: " + getY() + " }";
+    }
 }
 

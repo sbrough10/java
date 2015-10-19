@@ -6,19 +6,19 @@ package main;
 public class Region {
 
     LinkListNode.Chain<Path> edges = new LinkListNode.Chain<>();
-    Vector lastNode;
+    Vector2D lastNode;
 
-    public Region(Vector nodeA){
+    public Region(Vector2D nodeA){
         lastNode = nodeA;
     }
 
-    public Region addLine(Vector nodeB){
+    public Region addLine(Vector2D nodeB){
         edges.link(new Line(lastNode, nodeB));
         lastNode = nodeB;
         return this;
     }
 
-    public Region addCurve(Vector ctrlA, Vector ctrlB, Vector nodeB){
+    public Region addCurve(Vector2D ctrlA, Vector2D ctrlB, Vector2D nodeB){
         edges.link(new Curve(lastNode, ctrlA, ctrlB, nodeB));
         lastNode = nodeB;
         return this;
@@ -37,5 +37,11 @@ public class Region {
 
     public float getArea(){
         return 0;
+    }
+
+    public static class Contact {
+
+
+
     }
 }

@@ -5,21 +5,19 @@ package main;
  */
 public class Polygon extends Region {
 
-    LinkListNode.Chain<Line> edges = new LinkListNode.Chain<>();
-
-    public Polygon(Vector nodeA) {
+    public Polygon(Vector2D nodeA) {
         super(nodeA);
     }
 
     @Override
-    public Region addLine(Vector nodeB) {
+    public Region addLine(Vector2D nodeB) {
         edges.link(new Line(lastNode, nodeB));
         lastNode = nodeB;
         return this;
     }
 
     @Override
-    public Region addCurve(Vector ctrlA, Vector ctrlB, Vector nodeB) {
+    public Region addCurve(Vector2D ctrlA, Vector2D ctrlB, Vector2D nodeB) {
         return this;
     }
 
